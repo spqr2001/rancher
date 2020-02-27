@@ -1,8 +1,0 @@
-[rke_rancher_clusters]
-#cluster_rancher_ha # Belongs to Ansible Group rke_cluster_rancher_ha
-
-[rke_cluster_rancher_ha]
-node00
-node01
-node02
-nginx

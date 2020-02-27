@@ -1,0 +1,60 @@
+---
+- name: cleanup kubernetes data
+  shell: |
+   kubeadm reset -f
+   systemctl stop kubelet
+   systemctl stop docker
+   rm -rf /var/lib/cni/
+   rm -rf /var/lib/etcd
+   rm -rf /var/lib/kubelet/*
+   rm -rf /etc/cni/
+   ip link delete cni0
+   rm -rf /var/lib/docker/*
+   rm -rf /etc/kubernetes
+
+#- name: Prune everything (including non-dangling images)
+#  docker_prune:
+#    containers: yes
+#    images: yes
+#    images_filters:
+#      dangling: false
+#    networks: yes
+#    volumes: yes
+#    builder_cache: yes
+
+- name: remove dirs
+  file: 
+   path: "{{item}}" 
+   state: absent
+  loop: 
+   - /etc/kubernetes
+   - /home/hal9000/.kube
+
+- name: Remove old Docker
+  yum: name={{ item }} state=absent
+  loop:
+   - docker
+   - docker-client
+   - docker-client-latest
+   - docker-common
+   - docker-latest
+   - docker-latest-logrotate
+   - docker-logrotate
+   - docker-engine
+   - kubelet
+   - kubeadm
+   - kubectl
+   - docker-ce
+   - device-mapper-persistent-data
+  
+
+- name: Remove docker-ce-stable repo
+  yum_repository:
+   name: docker-ce
+   state: absent
+
+- name: Remove kubernetes repo
+  yum_repository:
+   name: kubernetes
+   state: absent
+

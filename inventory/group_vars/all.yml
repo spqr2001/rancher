@@ -1,0 +1,27 @@
+ad_addr: 192.168.178.51 
+cidr_v: 172.16.0.0/16
+ansible_user: hal9000
+network_zone: public 
+
+packages:
+- kubeadm
+- kubectl
+- docker-ce
+- docker-ce-cli
+- containerd.io
+- ansible 
+- htop 
+- nload 
+- git 
+
+services:
+- docker
+- kubelet
+- firewalld
+
+ports:
+- "6443/tcp"
+- "10250/tcp"
+
+token_file: join_token
+
