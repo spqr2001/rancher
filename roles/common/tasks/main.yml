@@ -8,7 +8,6 @@
    regexp: '(.*swap*)'
    replace: '#\1'
 
-
 - name: Modify sysctl entries
   sysctl:
     name: '{{ item.key }}'
@@ -26,6 +25,17 @@
     state: present
   loop: "{{ kernel_modules }}"
 
+- name: Disable PermitTunnel and AllowTcpForwarding
+  lineinfile:
+    dest=/etc/ssh/sshd_config
+    state=present
+    regexp=^{{ item.key }}
+    line="{{ item.key }} {{ item.value }}"
+    insertafter=EOF
+  loop:
+    - { key: 'PermitTunnel', value: 'no' }
+    - { key: 'AllowTcpForwarding', value: 'yes' }
+  notify: restart sshd
 
 - name: Remove old Docker
   yum: name={{ item }} state=absent

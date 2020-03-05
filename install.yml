@@ -4,12 +4,3 @@
   roles: 
     - common 
 
-- hosts: kubernetes-master-nodes 
-  become: true
-  roles: 
-    - master 
-
-- hosts: kubernetes-worker-nodes
-  become: true
-  roles: 
-    - worker
