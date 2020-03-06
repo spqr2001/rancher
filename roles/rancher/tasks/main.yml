@@ -1,2 +1,3 @@
 ---
-- import_tasks: rke.yml
+- name: rollout k8s via rke
+  import_tasks: rke.yml

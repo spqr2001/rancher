@@ -17,6 +17,7 @@ packages:
 - nload 
 - git 
 - python-pip
+- wget 
 
 kernel_modules:
       - br_netfilter

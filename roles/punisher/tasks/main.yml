@@ -7,6 +7,7 @@
    rm -rf /var/lib/cni/
    rm -rf /var/lib/etcd
    rm -rf /var/lib/kubelet/*
+   rm -rf /etc/nginx.conf
    rm -rf /etc/cni/
    ip link delete cni0
    rm -rf /var/lib/docker/*
@@ -30,23 +31,6 @@
    - /etc/kubernetes
    - /home/hal9000/.kube
 
-- name: Remove old Docker
-  yum: name={{ item }} state=absent
-  loop:
-   - docker
-   - docker-client
-   - docker-client-latest
-   - docker-common
-   - docker-latest
-   - docker-latest-logrotate
-   - docker-logrotate
-   - docker-engine
-   - kubelet
-   - kubeadm
-   - kubectl
-   - docker-ce
-   - device-mapper-persistent-data
-  
 
 - name: Remove docker-ce-stable repo
   yum_repository:

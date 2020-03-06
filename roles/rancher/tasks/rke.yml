@@ -1,23 +1,39 @@
 ---
+- name: install rke 
+  shell: wget https://github.com/rancher/rke/releases/download/v1.0.4/rke_linux-amd64 && mv rke_linux* /usr/local/bin/rke && chmod +x /usr/local/bin/rke 
+
+- name: install helm 
+  shell: wget https://get.helm.sh/helm-v3.1.1-linux-amd64.tar.gz && tar xfvz helm-v3.1.1-linux-amd64.tar.gz && mv linux-amd64/helm /usr/local/bin/helm
+
+- name: install helm certmanager
+  command: helm install   cert-manager jetstack/cert-manager   --namespace cert-manager   --version v0.12.0
+
+- name: install helm rancher 
+  command: helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
+
 - name: copy cluster template 
   template: 
     src: cluster.yml.j2
     dest: /tmp/cluster.yml 
     state: present 
-  when: inventory_hostname ==  groups[’kubernetes-master-nodes’][0]
- 
+
 - name: execute rke
-  shell: "cd /tmp && rke up"  
-  when: inventory_hostname ==  groups[’kubernetes-master-nodes’][0]
+  shell: "cd /tmp && rke up"
+
+- name: Wait for Rancher Server to come up
+  uri:
+    url: "https://{{ groups['nodes'][0] }}/v3-public"
+    timeout: 1
+    status_code: 200
+    validate_certs: false
+  register: rancher_server_status
+  retries: 60
+  delay: 1
+  until: rancher_server_status.status is defined and rancher_server_status.status == 200
+
+
+- name: create rancher namespace 
+  command: kubectl create namespace cattle-system
+  when: 
+    - rancher_server_status
  
-- name: install helm charts  
-  shell :  helm repo add stable https://kubernetes-charts.storage.googleapis.com/ && helm repo add rancher-latest https://releases.rancher.com/server-charts/latest &&  helm repo add jetstack https://charts.jetstack.io && helm repo update 
-
-
-- name: install certmanager 
-  shell: kubectl create namespace cattle-system  && kubectl get pods --namespace cert-manager
-
-- name: helm chart certmananger 
-  shell: helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v0.12.0
-
-- 
