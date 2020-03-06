@@ -1,0 +1,143 @@
+---
+- name: Disabling Swap on all nodes
+  shell: /sbin/swapoff -a
+  when: inventory_hostname == group[nodes]
+
+- name: Commenting Swap entries in /etc/fstab
+  replace:
+   path: /etc/fstab
+   regexp: '(.*swap*)'
+   replace: '#\1'
+  when: inventory_hostname == group[nodes]
+
+- name: Load kernel modules for RKE
+  modprobe:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ kernel_modules }}"
+  when: inventory_hostname == group[nodes]
+
+- name: Modify sysctl entries
+  sysctl:
+    name: '{{ item.key }}'
+    value: '{{ item.value }}'
+    sysctl_set: yes
+    state: present
+  loop:
+    - {key: net.bridge.bridge-nf-call-ip6tables, value: 1}
+    - {key: net.bridge.bridge-nf-call-iptables,  value: 1}
+    - {key: net.ipv4.ip_forward,  value: 1}
+  when: inventory_hostname == group[nodes]
+
+- name: Disable PermitTunnel and AllowTcpForwarding
+  lineinfile:
+    dest=/etc/ssh/sshd_config
+    state=present
+    regexp=^{{ item.key }}
+    line="{{ item.key }} {{ item.value }}"
+    insertafter=EOF
+  loop:
+    - { key: 'PermitTunnel', value: 'no' }
+    - { key: 'AllowTcpForwarding', value: 'yes' }
+  notify: restart sshd
+  when: inventory_hostname == group[nodes]
+
+- name: Remove old Docker
+  yum: name={{ item }} state=absent
+  loop:
+   - docker
+   - docker-client
+   - docker-client-latest
+   - docker-common
+   - docker-latest
+   - docker-latest-logrotate
+   - docker-logrotate
+   - docker-engine
+
+- name: install epel repo
+  yum: name=epel-release state=present 
+
+- name: add docker repo
+  shell: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+- name: add kubernetes repo
+  yum_repository:
+    name: kubernetes
+    description: Kubernetes repo
+    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+    gpgcheck: no
+    sslverify: no
+    enabled: true
+  when: inventory_hostname == group[nodes]
+
+- name: update 
+  yum: name=* state=latest
+
+- name: install docker and other dependencies  
+  yum: name={{ item }} state=present
+  loop:
+   - "{{ packages }}"
+
+- name: Start docker service
+  shell: systemctl daemon-reload && systemctl enable docker && systemctl restart docker
+
+- name: adding existing user "{{ ansible_user }}" to group docker 
+  user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: yes
+  become: yes
+
+- name: Starting and Enabling the required services
+  service:
+   name: "{{ item }}"
+   state: started
+   enabled: yes
+  loop: "{{ services }}"
+  when: inventory_hostname == group[nodes]
+
+- name: open ports
+  firewalld:
+    port: "{{item}}"
+    permanent: true
+    state: enabled
+  loop:
+    - 6443/tcp
+    - 5443/tcp
+    - 2379-2380/tcp
+    - 10250/tcp
+    - 10251/tcp
+    - 10252/tcp
+    - 10053/tcp
+    - 10053/udp
+    - 10255/tcp
+    - 30000-32767/tcp
+    - 8082/tcp
+    - 8472/udp
+    - 8285/udp
+    - 9898/tcp
+    - 9100/tcp
+    - 443/tcp
+    - 53/tcp
+    - 53/udp
+    - 4194/tcp
+    - 10254/tcp
+  when: inventory_hostname == group[nodes]
+
+
+- name: open ports
+  firewalld:
+    port: "{{item}}"
+    permanent: true
+    state: enabled
+  loop:
+    - 80/tcp
+    - 443/tcp
+  when: inventory_hostname == group[lb]
+
+- name: Enable IP masquerading
+  shell: "firewall-cmd --permanent --zone={{ network_zone }} --add-masquerade"
+
+- name: reload firewalld
+  shell: firewall-cmd --reload
+

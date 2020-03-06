@@ -1,2 +1,2 @@
 ---
-# tasks file for rancher
+- import_tasks: rke.yml

@@ -3,6 +3,9 @@ cidr_v: 172.16.0.0/16
 ansible_user: hal9000
 network_zone: public 
 
+cluster_version: v1.17.2-rancher1-2
+cluster_name: rancherlb
+
 packages:
 - kubeadm
 - kubectl

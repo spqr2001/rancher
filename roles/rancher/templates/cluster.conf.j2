@@ -1,19 +1,12 @@
 nodes:
-- address: 192.168.178.51
-  internal_address:
-  hostname_override: rke-master-01
-  role: [controlplane, etcd]
-  user: hal9000
-- address: 192.168.178.46 
-  internal_address:
-  hostname_override: rke-worker-01
-  role: [worker]
-  user: hal9000
-- address: 192.168.178.47 
-  internal_address:
-  hostname_override: rke-worker-02
-  role: [worker]
-  user: hal9000
+{% for node in groups['nodes'] %}
+    - address: {{ node }}
+      user: {{ ansible_user }}
+      role:
+        - controlplane
+        - etcd
+        - worker
+{% endfor %}
 
 cluster_name: {{ cluster_name }} 
 

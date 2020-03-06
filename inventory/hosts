@@ -1,16 +1,12 @@
-[kubernetes-master-nodes]
-kubernetes-master ansible_host=node00
-
-[kubernetes-worker-nodes]
-kubernetes-worker01 ansible_host=node01
-kubernetes-worker02 ansible_host=node02
+[nodes]
+192.168.178.51 ansible_host=node00
+192.168.178.46 ansible_host=node01
+192.168.178.47 ansible_host=node02
+192.168.178.68 ansible_host=node03
 
 [lb]
-rancherlb
+192.168.178.72 ansible_host=rancherlb
 
-[nodes:children]
-kubernetes-master-nodes
-kubernetes-worker-nodes
 
 
 
