@@ -1,16 +1,15 @@
 ---
-- hosts: all 
-  become: true
-  roles: 
-    - common 
-
-- hosts: lb 
-  become: true
-  roles: 
-    - nginx
-
-#- hosts: nodes
-#  become: true 
+#- hosts: all 
+#  become: true
 #  roles: 
-#    - rancher
+#    - common 
+
+#- hosts: lb 
+#  become: true
+#  roles: 
+#    - nginx
+
+- hosts: nodes
+  roles: 
+    - rancher
 
