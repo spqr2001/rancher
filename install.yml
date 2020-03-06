@@ -7,6 +7,10 @@
 - hosts: lb 
   become: true
   roles: 
-    - common 
     - nginx
+
+#- hosts: nodes
+#  become: true 
+#  roles: 
+#    - rancher
 
