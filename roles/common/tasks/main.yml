@@ -75,8 +75,6 @@
     gpgcheck: no
     sslverify: no
     enabled: true
-  with_inventory_hostnames:
-    - nodes 
 
 - name: update 
   yum: name=* state=latest
@@ -101,8 +99,6 @@
    state: started
    enabled: yes
   loop: "{{ services }}"
-  with_inventory_hostnames:
-    - nodes 
 
 - name: open ports noedes
   firewalld:
