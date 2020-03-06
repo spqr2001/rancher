@@ -1,11 +1,12 @@
+#####
 [nodes]
-192.168.178.51 ansible_host=node00
-192.168.178.46 ansible_host=node01
-192.168.178.47 ansible_host=node02
-192.168.178.68 ansible_host=node03
-
+192.168.178.51 
+192.168.178.46 
+192.168.178.47 
+192.168.178.68 
+####
 [lb]
-192.168.178.72 ansible_host=rancherlb
+192.168.178.72
 
 
 

@@ -3,14 +3,13 @@
   shell: /sbin/swapoff -a
   with_inventory_hostnames:
     - nodes 
-    #- all:!lb
 
 - name: Commenting Swap entries in /etc/fstab
   replace:
     path: /etc/fstab
     regexp: '(.*swap*)'
     replace: '#\1'
-  with_inventory_hostnames:
+  with_inventory_hostnames: 
     - nodes
 
 - name: Load kernel modules for RKE
@@ -18,8 +17,6 @@
     name: "{{ item }}"
     state: present
   loop: "{{ kernel_modules }}"
-  with_inventory_hostnames:
-    - nodes 
 
 - name: Modify sysctl entries
   sysctl:
@@ -31,9 +28,6 @@
     - {key: net.bridge.bridge-nf-call-ip6tables, value: 1}
     - {key: net.bridge.bridge-nf-call-iptables,  value: 1}
     - {key: net.ipv4.ip_forward,  value: 1}
-  with_inventory_hostnames:
-    - nodes 
-
 
 - name: Disable PermitTunnel and AllowTcpForwarding
   lineinfile:
@@ -46,8 +40,6 @@
     - { key: 'PermitTunnel', value: 'no' }
     - { key: 'AllowTcpForwarding', value: 'yes' }
   notify: restart sshd
-  with_inventory_hostnames:
-    - nodes 
 
 - name: Remove old Docker
   yum: name={{ item }} state=absent
@@ -124,21 +116,10 @@
     - 443/tcp
     - 53/tcp
     - 53/udp
-    - 4194/tcp
-    - 10254/tcp
-  with_inventory_hostnames:
-    - nodes 
-
-- name: open ports load balancer
-  firewalld:
-    port: "{{item}}"
-    permanent: true
-    state: enabled
-  loop:
     - 80/tcp
     - 443/tcp
-  with_inventory_hostnames:
-    - lb 
+    - 4194/tcp
+    - 10254/tcp
 
 - name: Enable IP masquerading
   shell: "firewall-cmd --permanent --zone={{ network_zone }} --add-masquerade"

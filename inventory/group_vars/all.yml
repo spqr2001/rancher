@@ -16,6 +16,7 @@ packages:
 - htop 
 - nload 
 - git 
+- python-pip
 
 kernel_modules:
       - br_netfilter
