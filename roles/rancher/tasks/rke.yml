@@ -56,3 +56,7 @@
 
 - name: execute rke
   command: "rke up --config /tmp/cluster.yml"
+
+- name: deploy config 
+  shell: "cp /tmp/kube_config_cluster.yml /home/hal9000/.kube/config && mv /tmp/kube_config_cluster.yml /root/.kube/config && cat /root/.kube/config "
+  become: true

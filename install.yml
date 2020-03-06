@@ -4,12 +4,7 @@
 #  roles: 
 #    - common 
 
-#- hosts: lb 
-#  become: true
-#  roles: 
-#    - nginx
-
-- hosts: lb  
+- hosts: lb 
   roles: 
+#    - nginx
     - rancher
-

@@ -9,6 +9,10 @@
    rm -rf /var/lib/kubelet/*
    rm -rf /etc/nginx.conf
    rm -rf /etc/cni/
+   rm -rf /tmp/cluster.yml 
+   rm -rf /usr/local/bin/* 
+   rm -rf /home/hal9000/*
+   rm -rf /home/hal9000/.kube
    ip link delete cni0
    rm -rf /var/lib/docker/*
    rm -rf /etc/kubernetes

@@ -1,2 +1,24 @@
 ---
-- name: 
+- name: install rancher namespace 
+  command: kubectl create namespace cattle-system && kubectl create namespace cert-manager
+
+- name: prepare certmanager 
+  command: kubectl apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.12/deploy/manifests/00-crds.yaml
+
+- name: add certmanager repo 
+  command: helm repo add jetstack https://charts.jetstack.io
+
+- name: helm repo update 
+  command: helm repo update 
+
+- name: helm install certmanager 
+  command: helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v0.12.0
+
+- name: check certmanager status 
+  command: kubectl -n cert-manager rollout status deploy/cert-manager 
+
+- name: rollout rancher 
+  command: helm install rancher rancher-latest/rancher  --namespace cattle-system   --set hostname="{{ cluster_name }}" 
+
+- name: check rancher status 
+  command: kubectl -n cattle-system rollout status deploy/rancher
