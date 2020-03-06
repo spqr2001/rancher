@@ -1,1 +1,13 @@
+installs k8s master / worker config with rke , helm installs rancher, including nginx loadbalancer 
+
+
+
+
+
+
+
+
+
+party based on 
 https://computingforgeeks.com/install-kubernetes-production-cluster-using-rancher-rke/
+https://rancher.com/docs/rancher/v2.x/en/installation/k8s-install/create-nodes-lb/nginx/
