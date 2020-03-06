@@ -4,3 +4,9 @@
   roles: 
     - common 
 
+- hosts: lb 
+  become: true
+  roles: 
+    - common 
+    - nginx
+

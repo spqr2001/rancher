@@ -1,0 +1,23 @@
+---
+- name: copy cluster template 
+  template: 
+    src: cluster.yml.j2
+    dest: /tmp/cluster.yml 
+    state: present 
+  when: inventory_hostname ==  groups[’kubernetes-master-nodes’][0]
+ 
+- name: execute rke
+  shell: "cd /tmp && rke up"  
+  when: inventory_hostname ==  groups[’kubernetes-master-nodes’][0]
+ 
+- name: install helm charts  
+  shell :  helm repo add stable https://kubernetes-charts.storage.googleapis.com/ && helm repo add rancher-latest https://releases.rancher.com/server-charts/latest &&  helm repo add jetstack https://charts.jetstack.io && helm repo update 
+
+
+- name: install certmanager 
+  shell: kubectl create namespace cattle-system  && kubectl get pods --namespace cert-manager
+
+- name: helm chart certmananger 
+  shell: helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v0.12.0
+
+- 
