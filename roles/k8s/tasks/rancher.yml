@@ -1,12 +1,6 @@
 ---
 - name: install rancher namespace 
-  command: kubectl create namespace cattle-system 
-  ignore_errors: true
-
-- name: install cert-manager namespace 
-  command: kubectl create namespace cert-manager
-  ignore_errors: true
-
+  command: kubectl create namespace cattle-system && kubectl create namespace cert-manager
 
 - name: prepare certmanager 
   command: kubectl apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.12/deploy/manifests/00-crds.yaml
