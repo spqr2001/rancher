@@ -33,7 +33,7 @@
 - name: prep kubectl for hal9000
   file: 
     path: /home/hal9000/.kube 
-    mode: '0640'
+    mode: '0750'
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     state: directory
@@ -42,7 +42,7 @@
 - name: prep kubectl for root
   file:
     path: /root/.kube
-    mode: '0640'
+    mode: '0750'
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     state: directory
@@ -52,7 +52,7 @@
   template: 
     src: cluster.yml.j2
     dest: /tmp/cluster.yml 
-    state: present 
+  become: true
 
 - name: execute rke
-  shell: "cd /tmp && rke up && cp kube_config_cluster.yml /home/{{ ansible_user }}/.kube/config &&  mv kube_config_cluster.yml /root/.kube/config"
+  command: "rke up --config /tmp/cluster.yml"

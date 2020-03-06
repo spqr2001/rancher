@@ -9,7 +9,7 @@
 #  roles: 
 #    - nginx
 
-- hosts: nodes
+- hosts: lb  
   roles: 
     - rancher
 
