@@ -21,8 +21,11 @@ nodes:
 
 cluster_name: lab 
 
-kubernetes_version: v1.17.4-rancher1 
-
+#kubernetes_version: v1.17.4-rancher1 
+rancher_kubernetes_engine_config: # Your RKE template config goes here.
+  addon_job_timeout: 30
+  authentication:
+    strategy: x509
 ignore_docker_version: false
 
 
