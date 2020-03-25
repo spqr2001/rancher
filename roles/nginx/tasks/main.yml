@@ -18,6 +18,7 @@
     name: rancherlb 
     image: nginx:1.14
     state: started
+    restart_policy: unless-stopped
     restart: yes 
     ports: 
       - "80:80"

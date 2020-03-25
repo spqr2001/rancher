@@ -1,11 +1,12 @@
 ---
-- hosts: all 
-  become: true
-  roles: 
-    - common 
+#- hosts: all 
+#  become: true
+#  roles: 
+#    - common 
 
 - hosts: lb 
   roles: 
+#    - k8s
+#    - rancher
     - nginx
-    - k8s 
-    - rancher
+
