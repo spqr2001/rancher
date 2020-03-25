@@ -20,6 +20,7 @@ nodes:
 
 
 cluster_name: lab 
+name: lab
 
 #kubernetes_version: v1.17.4-rancher1 
 rancher_kubernetes_engine_config: # Your RKE template config goes here.
