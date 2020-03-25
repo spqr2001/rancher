@@ -6,7 +6,7 @@
 
 - hosts: lb 
   roles: 
-#    - k8s
+    - k8s
 #    - rancher
     - nginx
 
