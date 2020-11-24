@@ -64,6 +64,9 @@
   loop:
    - "{{ packages }}"
 
+- name: install rancher docker sh 
+  shell: curl https://releases.rancher.com/install-docker/19.03.sh | sh
+
 - name: Start docker service
   shell: systemctl daemon-reload && systemctl enable docker && systemctl restart docker
 
@@ -141,11 +144,3 @@
     rancher/nginx-ingress-controller-defaultbackend:1.5-rancher1
     rancher/metrics-server:v0.3.6
 
-- name: Install a list of packages (suitable replacement for 2.11 loop deprecation warning)
-  yum:
-    name:
-      - htop  
-      - nload 
-      - git
-      - qemu-guest-agent 
-    state: present

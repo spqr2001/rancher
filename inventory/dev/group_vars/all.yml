@@ -20,6 +20,8 @@ packages:
 - git 
 - python-pip
 - wget 
+- qemu-guest-agent
+
 
 kernel_modules:
       - br_netfilter
