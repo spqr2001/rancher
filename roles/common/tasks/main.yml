@@ -41,23 +41,11 @@
     - { key: 'AllowTcpForwarding', value: 'yes' }
   notify: restart sshd
 
-- name: Remove old Docker
-  yum: name={{ item }} state=absent
-  loop:
-   - docker
-   - docker-client
-   - docker-client-latest
-   - docker-common
-   - docker-latest
-   - docker-latest-logrotate
-   - docker-logrotate
-   - docker-engine
+- name: install rancher docker 
+  shell: curl https://releases.rancher.com/install-docker/19.03.sh | sh 
 
 - name: install epel repo
   yum: name=epel-release state=present 
-
-- name: add docker repo
-  shell: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 
 - name: add kubernetes repo
   yum_repository:
@@ -127,3 +115,37 @@
 - name: reload firewalld
   shell: firewall-cmd --reload
 
+- name: preload docker images 
+  shell: docker pull "{{ item }}" 
+  loop: 
+    rancher/coreos-etcd:v3.4.3-rancher1
+    rancher/rke-tools:v0.1.66
+    rancher/k8s-dns-kube-dns:1.15.0
+    rancher/k8s-dns-dnsmasq-nanny:1.15.0
+    rancher/k8s-dns-sidecar:1.15.0
+    rancher/cluster-proportional-autoscaler:1.7.1
+    rancher/coredns-coredns:1.6.5
+    rancher/k8s-dns-node-cache:1.15.7
+    rancher/hyperkube:v1.17.14-rancher1
+    rancher/coreos-flannel:v0.12.0
+    rancher/flannel-cni:v0.3.0-rancher6
+    rancher/calico-node:v3.13.4
+    rancher/calico-cni:v3.13.4
+    rancher/calico-kube-controllers:v3.13.4
+    rancher/calico-ctl:v3.13.4
+    rancher/calico-pod2daemon-flexvol:v3.13.4
+    weaveworks/weave-kube:2.6.4
+    weaveworks/weave-npc:2.6.4
+    rancher/pause:3.1
+    rancher/nginx-ingress-controller:nginx-0.35.0-rancher2
+    rancher/nginx-ingress-controller-defaultbackend:1.5-rancher1
+    rancher/metrics-server:v0.3.6
+
+- name: Install a list of packages (suitable replacement for 2.11 loop deprecation warning)
+  yum:
+    name:
+      - htop  
+      - nload 
+      - git
+      - qemu-guest-agent 
+    state: present
