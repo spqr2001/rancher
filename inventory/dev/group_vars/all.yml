@@ -10,17 +10,14 @@ cluster_name: rancherlb
 packages:
 - kubeadm
 - kubectl
-- docker-ce
-- docker-ce-cli
-- containerd.io
 - ansible 
 - htop 
-- open-vm-tools
 - nload 
 - git 
 - python-pip
 - wget 
 - qemu-guest-agent
+- docker-py
 
 docker_images: 
   - rancher/coreos-etcd:v3.4.3-rancher1
@@ -46,7 +43,33 @@ docker_images:
   - rancher/nginx-ingress-controller-defaultbackend:1.5-rancher1
   - rancher/metrics-server:v0.3.6
 
+sys_ports: 
+ - 6443/tcp
+ - 5443/tcp
+ - 2379-2380/tcp
+ - 10250/tcp
+ - 10251/tcp
+ - 10252/tcp
+ - 10053/tcp
+ - 10053/udp
+ - 10255/tcp
+ - 30000-32767/tcp
+ - 8082/tcp
+ - 8472/udp
+ - 8285/udp
+ - 9898/tcp
+ - 9100/tcp
+ - 443/tcp
+ - 53/tcp
+ - 53/udp
+ - 80/tcp
+ - 443/tcp
+ - 4194/tcp
+ - 10254/tcp
 
+pip_modules:
+ - pip 
+ - docker-py
 
 
 kernel_modules:

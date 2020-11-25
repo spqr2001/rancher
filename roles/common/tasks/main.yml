@@ -12,6 +12,12 @@
   with_inventory_hostnames: 
     - nodes
 
+- name: install docker and other dependencies
+  yum: name={{ item }} state=present
+  loop:
+   - "{{ packages }}"
+
+
 - name: Load kernel modules for RKE
   modprobe:
     name: "{{ item }}"
@@ -47,6 +53,12 @@
 - name: install epel repo
   yum: name=epel-release state=present 
 
+- name: install the package, force upgrade
+  pip:
+    name: "{{ item }}"
+    state: latest
+  loop: "{{ pip_modules }}"
+
 - name: add kubernetes repo
   yum_repository:
     name: kubernetes
@@ -64,14 +76,6 @@
 
 - debug:
     var: yum_updates.changes.updated
-
-- name: install docker and other dependencies  
-  yum: name={{ item }} state=present
-  loop:
-   - "{{ packages }}"
-
-- name: install rancher docker sh 
-  shell: curl https://releases.rancher.com/install-docker/19.03.sh | sh
 
 - name: Start docker service
   shell: systemctl daemon-reload && systemctl enable docker && systemctl restart docker
@@ -94,40 +98,20 @@
     port: "{{item}}"
     permanent: true
     state: enabled
-  loop:
-    - 6443/tcp
-    - 5443/tcp
-    - 2379-2380/tcp
-    - 10250/tcp
-    - 10251/tcp
-    - 10252/tcp
-    - 10053/tcp
-    - 10053/udp
-    - 10255/tcp
-    - 30000-32767/tcp
-    - 8082/tcp
-    - 8472/udp
-    - 8285/udp
-    - 9898/tcp
-    - 9100/tcp
-    - 443/tcp
-    - 53/tcp
-    - 53/udp
-    - 80/tcp
-    - 443/tcp
-    - 4194/tcp
-    - 10254/tcp
-
+  loop: "{{ sys_ports }}"
+  
 - name: Enable IP masquerading
   shell: "firewall-cmd --permanent --zone={{ network_zone }} --add-masquerade"
 
 - name: reload firewalld
   shell: firewall-cmd --reload
 
-- name: preload  docker images
-  shell: docker pull {{ item }} 
-  loop:
-   - "{{ docker_images }}"
+- name: Pull an image
+  docker_image:
+    name: "{{ item }}"  
+  loop: 
+    - "{{ docker_images }}"
+
 
 - name: Reboot "{{ ansible_hostname }}"  
   reboot:
