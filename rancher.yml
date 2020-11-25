@@ -1,0 +1,7 @@
+---
+
+- hosts: lb 
+  roles: 
+    - rancher
+    - nginx
+

@@ -12,11 +12,22 @@
   with_inventory_hostnames: 
     - nodes
 
+- name: install epel repo
+  yum: name=epel-release state=present
+
+- name: add kubernetes repo
+  yum_repository:
+    name: kubernetes
+    description: Kubernetes repo
+    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+    gpgcheck: no
+    sslverify: no
+    enabled: true
+
 - name: install docker and other dependencies
   yum: name={{ item }} state=present
   loop:
    - "{{ packages }}"
-
 
 - name: Load kernel modules for RKE
   modprobe:
@@ -50,23 +61,12 @@
 - name: install rancher docker 
   shell: curl https://releases.rancher.com/install-docker/19.03.sh | sh 
 
-- name: install epel repo
-  yum: name=epel-release state=present 
 
 - name: install the package, force upgrade
   pip:
     name: "{{ item }}"
     state: latest
   loop: "{{ pip_modules }}"
-
-- name: add kubernetes repo
-  yum_repository:
-    name: kubernetes
-    description: Kubernetes repo
-    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
-    gpgcheck: no
-    sslverify: no
-    enabled: true
 
 - name: YUM Update
   yum:
@@ -115,5 +115,4 @@
 
 
 - name: Reboot "{{ ansible_hostname }}"  
-  reboot:
-    when: '"kernel" in yum_updates.changes.updated'
+  shell: "init 6"

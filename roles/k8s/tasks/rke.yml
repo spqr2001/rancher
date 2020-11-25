@@ -1,20 +1,20 @@
 ---
 - name: install rke 
   get_url:
-    url: https://github.com/rancher/rke/releases/download/v1.0.4/rke_linux-amd64 
+    url: "{{ rke_bin }}"  
     dest: /usr/local/bin/rke_linux-amd64
     mode: '0644'
   become: true
 
 - name: install helm 
   get_url: 
-    url: https://get.helm.sh/helm-v3.1.1-linux-amd64.tar.gz
-    dest: /usr/local/bin/helm-v3.1.1-linux-amd64.tar.gz
+    url: "{{ helm_bin }}" 
+    dest: /usr/local/bin/helm.tar.gz
     mode: '0644'
   become: true
 
 - name: unpack helm 
-  shell: "cd /usr/local/bin && tar xfvz helm-v3.1.1-linux-amd64.tar.gz && mv linux-amd64/helm helm"
+  shell: "cd /usr/local/bin && tar xfvz helm.tar.gz && mv linux-amd64/helm helm"
   become: true
 
 - name: rename rke  
@@ -22,7 +22,7 @@
   become: true
 
 - name: add helm stable repo 
-  command: helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+  command: helm repo add stable https://charts.helm.sh/stable 
 
 - name: install helm rancher
   command: helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
@@ -54,24 +54,25 @@
     dest: /tmp/cluster.yml 
   become: true
 
-#- name: check for container creation
-#  command: kubectl get pods --field-selector=status.phase=ContainerCreating --all-namespaces
-
 
 #- name: execute rke
 #  command: rke up --config /tmp/cluster.yml
 
-#- name: deploy config 
-#  shell: "cp /tmp/kube_config_cluster.yml /home/hal9000/.kube/config && cp /tmp/kube_config_cluster.yml /root/.kube/config "
-#  become: true
+- name: deploy config 
+  shell: "cp /tmp/kube_config_cluster.yml /home/hal9000/.kube/config && cp /tmp/kube_config_cluster.yml /root/.kube/config "
+  become: true
+
+- name: change ownership 
+  file: 
+    path: /home/hal9000/.kube/config
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0644'
+  become: true
+
+- name: check for container creation
+  command: kubectl get pods --field-selector=status.phase=ContainerCreating --all-namespaces
 
 
-#- name: change ownership 
-#  file: 
-#    path: /home/hal9000/.kube/config
-#    owner: "{{ ansible_user }}"
-#    group: "{{ ansible_user }}"
-#    mode: '0644'
-#  become: true
 
 
