@@ -1,3 +1,6 @@
 ---
 - name: restart sshd
   service: name=sshd state=restarted
+
+- name: reboot noed
+  shell: "init 6" 

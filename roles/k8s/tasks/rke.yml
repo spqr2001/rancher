@@ -61,6 +61,7 @@
 - name: deploy config 
   shell: "cp /tmp/kube_config_cluster.yml /home/hal9000/.kube/config && cp /tmp/kube_config_cluster.yml /root/.kube/config "
   become: true
+  ignore_errors: true
 
 - name: change ownership 
   file: 
@@ -69,9 +70,11 @@
     group: "{{ ansible_user }}"
     mode: '0644'
   become: true
+  ignore_errors: true
 
 - name: check for container creation
   command: kubectl get pods --field-selector=status.phase=ContainerCreating --all-namespaces
+  ignore_errors: true
 
 
 

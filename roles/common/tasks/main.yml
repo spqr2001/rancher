@@ -113,6 +113,3 @@
 #  loop: 
 #    - "{{ docker_images }}"
 
-
-- name: Reboot "{{ ansible_hostname }}"  
-  shell: "init 6"

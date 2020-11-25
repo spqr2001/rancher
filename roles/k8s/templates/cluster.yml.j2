@@ -1,14 +1,14 @@
 # If you intened to deploy Kubernetes in an air-gapped environment,
 # please consult the documentation on how to configure custom RKE images.
 nodes:
-- address: 192.168.178.32
+- address: controlplane0 
   port: "22"
   internal_address: ""
   role:
   - controlplane
   - worker
   - etcd
-  hostname_override: controlplane0
+  hostname_override: controlplane0 
   user: hal9000
   docker_socket: /var/run/docker.sock
   ssh_key: ""
@@ -17,7 +17,7 @@ nodes:
   ssh_cert_path: ""
   labels: {}
   taints: []
-- address: 192.168.178.33
+- address: controlplane1 
   port: "22"
   internal_address: ""
   role:
@@ -33,7 +33,7 @@ nodes:
   ssh_cert_path: ""
   labels: {}
   taints: []
-- address: 192.168.178.37
+- address: controlplane2 
   port: "22"
   internal_address: ""
   role:
