@@ -56,8 +56,14 @@
     sslverify: no
     enabled: true
 
-- name: update 
-  yum: name=* state=latest
+- name: YUM Update
+  yum:
+    name:  "*"
+    state: latest
+  register: yum_updates
+
+- debug:
+    var: yum_updates.changes.updated
 
 - name: install docker and other dependencies  
   yum: name={{ item }} state=present
@@ -123,4 +129,6 @@
   loop:
    - "{{ docker_images }}"
 
-
+- name: Reboot "{{ ansible_hostname }}"  
+  reboot:
+    when: '"kernel" in yum_updates.changes.updated'
