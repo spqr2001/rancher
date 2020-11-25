@@ -17,7 +17,6 @@ packages:
 - python-pip
 - wget 
 - qemu-guest-agent
-- docker-py
 
 docker_images: 
   - rancher/coreos-etcd:v3.4.3-rancher1
@@ -69,7 +68,7 @@ sys_ports:
 
 pip_modules:
  - pip 
- - docker-py
+ - docker
 
 
 kernel_modules:

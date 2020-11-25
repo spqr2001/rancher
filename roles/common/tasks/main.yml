@@ -106,11 +106,12 @@
 - name: reload firewalld
   shell: firewall-cmd --reload
 
-- name: Pull an image
-  docker_image:
-    name: "{{ item }}"  
-  loop: 
-    - "{{ docker_images }}"
+#- name: Pull an image
+#  docker_image:
+#    name: "{{ item }}"  
+#    source: pull
+#  loop: 
+#    - "{{ docker_images }}"
 
 
 - name: Reboot "{{ ansible_hostname }}"  
